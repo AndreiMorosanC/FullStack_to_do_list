@@ -3,6 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import taskRoutes from "./routes/taskRoutes.js";
+import router from "./routes/userRoute.js"
 dotenv.config();
 
 const app = express();
@@ -29,6 +30,7 @@ connectDB();
 
 app.use(express.json());
 app.use("/api/task", taskRoutes);
+app.use("/api/users", router)
 app.listen(3001, () => {
   console.log("🚀 Servidor backend en http://localhost:3001");
 });

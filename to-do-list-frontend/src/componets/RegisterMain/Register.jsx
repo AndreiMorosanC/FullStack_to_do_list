@@ -6,20 +6,34 @@ const Register = ()=>{
 
     const {email , password, handleEmailChange, handlePasswordChange, register, error} = useRegister();
 
-    const handleRegister = async ()=>{
-        const result = await register()
+    const handleRegister = async () => {
+  try {
+    const result = await register();
 
-        const res = await fetch("http://localhost:3001/api/usuarios", {
-            method: "POST",
-            headers:{
-                Authorization: `Bearer ${result.token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify()
-        })
+    const res = await fetch("http://localhost:3001/api/users", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${result.token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        uid: result.uid,
+        email: result.email,
+      }),
+    });
 
-        const data = await res.json();
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Error ${res.status}: ${errorText}`);
     }
+
+    const data = await res.json();
+    console.log("Usuario guardado:", data);
+  } catch (error) {
+    console.error("Error al registrar usuario:", error.message);
+  }
+};
+
 
 
 
