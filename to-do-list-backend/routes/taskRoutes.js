@@ -1,11 +1,12 @@
 import express from "express"
-import {createTask} from "../controllers/taskController.js"
+import {createTask, getTasks} from "../controllers/taskController.js"
+import verifyToken from "../middlewares/auth.js";
 
 
 const router = express.Router()
 
 
-router.post("/" , createTask);
-
+router.post("/" ,verifyToken ,createTask);
+router.get("/",verifyToken, getTasks)
 
 export default router;

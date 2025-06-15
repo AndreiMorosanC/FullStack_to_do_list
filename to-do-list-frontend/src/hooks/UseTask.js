@@ -1,21 +1,27 @@
 import { useState } from "react";
+import { auth } from "../../firebase";
+import { getIdToken } from "firebase/auth";
 
+const useTask = () => {
+  const [loading, setLoading] = useState(false);
 
+  const createTask = async (task) => {
+    const user = auth.currentUser;
+    if (!user) {
+      console.error("Usuario no autenticado");
+      return;
+    }
 
-const useTask = ()=>{
+    const token = await getIdToken(user);
 
-    const [loading, setLoading] = useState(false);
-
-
-
-    const createTask = async (task) => {
     setLoading(true);
     try {
       const res = await fetch("http://localhost:3001/api/task", {
         method: "POST",
         headers: {
-      'Content-Type': 'application/json',
-    },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(task),
       });
       const data = await res.json();
@@ -24,31 +30,30 @@ const useTask = ()=>{
     } catch (err) {
       console.error("❌ Error al crear tarea:", err.message);
       return null;
-    }finally{
-        setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
-
-  const getTasks = async () =>{
-    try{
-         const res = await fetch("http://localhost:3001/api/task", {
+  const getTasks = async () => {
+    try {
+      const res = await fetch("http://localhost:3001/api/task", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-        }
-     });
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!res.ok) throw new Error("No se pudieron obtener las tareas");
-      return await res.json();
-    }catch (err) {
+      const tasks = await res.json();
+      return tasks
+    } catch (err) {
       console.error("❌ Error al obtener tareas:", err.message);
       return [];
-  }
-  }
+    }
+  };
 
-
-
-  return {createTask,getTasks, loading}
-}
+  return { createTask, getTasks, loading };
+};
 
 export default useTask;

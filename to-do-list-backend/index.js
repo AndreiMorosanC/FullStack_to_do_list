@@ -27,7 +27,7 @@ export async function connectDB() {
 }
 
 connectDB();
-
+  
 app.use(express.json());
 app.use("/api/task", taskRoutes);
 app.use("/api/users", router)

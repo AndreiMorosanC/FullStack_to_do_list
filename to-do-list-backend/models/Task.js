@@ -5,6 +5,7 @@ const taskSchema = new mongoose.Schema(
     {
         title: {type: String, required:true},
         done : {type:Boolean, required:true},
+        userId: { type: String, required: true },
     },
     { timestamps: true }
 )
